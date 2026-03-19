@@ -1,0 +1,585 @@
+{
+  "simulationId": "first-term-new-adjunct-instructor-simulation",
+  "title": "First Term: New Adjunct Instructor Simulation",
+  "version": "1.0",
+  "institution": "Tiffin",
+  "description": "A branching simulation for new adjunct instructors covering course readiness, course launch, mid-course teaching, and end-of-term responsibilities.",
+  "engine": {
+    "scoreRange": { "min": 0, "max": 100 },
+    "startingScores": {
+      "instructorPresence": 60,
+      "responsiveness": 60,
+      "feedbackQuality": 60,
+      "policyCompliance": 60,
+      "studentExperience": 60
+    },
+    "dashboardThresholds": {
+      "green": { "min": 80, "max": 100 },
+      "yellow": { "min": 50, "max": 79 },
+      "red": { "min": 0, "max": 49 }
+    },
+    "dashboardDisplay": {
+      "showAtEndOfEachPhase": true,
+      "showFinalSummary": true,
+      "style": "bars",
+      "colors": ["red", "yellow", "green"],
+      "metrics": [
+        "instructorPresence",
+        "responsiveness",
+        "feedbackQuality",
+        "policyCompliance",
+        "studentExperience"
+      ]
+    },
+    "rules": {
+      "clampScoresToRange": true,
+      "defaultPhaseFlow": "linear",
+      "decisionMode": "single_choice",
+      "storeTriggersAsBooleans": true
+    }
+  },
+  "triggers": [
+    "completedChecklist",
+    "subscribedToQAForum",
+    "reportedBrokenLinks",
+    "postedWelcomeAnnouncement",
+    "usedClearAnnouncements",
+    "reachedOutToInactiveStudents",
+    "contactedAdvisorForInactiveStudents",
+    "participatedInDiscussions",
+    "definedLatePolicy",
+    "usedPersonalizedFeedback",
+    "handledAIConcernAppropriately",
+    "editedCourseImproperly",
+    "submittedFinalGradesOnTime"
+  ],
+  "phases": [
+    {
+      "id": "phase1",
+      "title": "Phase 1: Course Readiness",
+      "goal": "Prepare the course before students enter and meet institutional expectations.",
+      "introText": "You have been assigned your first online course and receive a course checklist from the Center for Online Learning. You are expected to review the course before the term begins, verify links and materials, subscribe to the Q&A forum, and report any issues to moodlesupport@tiffin.edu. The checklist must be completed on time. Failure to complete required setup tasks or respond to communications may result in replacement before the course begins.",
+      "prePhaseEvents": [],
+      "scenes": [
+        {
+          "id": "p1_d1",
+          "type": "decision",
+          "title": "Course checklist",
+          "prompt": "You receive the course checklist by email. The checklist asks you to check all course links, test textbook links, review assignments, subscribe to the Q&A forum, and report any issues to moodlesupport@tiffin.edu. What do you do first?",
+          "choices": [
+            {
+              "id": "A",
+              "text": "Complete the checklist thoroughly and begin reviewing the course right away.",
+              "effects": { "policyCompliance": 10, "responsiveness": 5 },
+              "setTriggers": { "completedChecklist": true },
+              "feedback": "You start strong by following the required startup process."
+            },
+            {
+              "id": "B",
+              "text": "Skim the checklist and assume the course is probably fine.",
+              "effects": { "policyCompliance": -5, "studentExperience": -5 },
+              "setTriggers": { "completedChecklist": false },
+              "feedback": "You save time now, but risk missing issues that could affect students later."
+            },
+            {
+              "id": "C",
+              "text": "Put it off for a few days because there is still time before the course starts.",
+              "effects": { "responsiveness": -10, "policyCompliance": -10 },
+              "setTriggers": { "completedChecklist": false },
+              "feedback": "Delaying required tasks may create problems if issues are found too close to launch."
+            }
+          ]
+        },
+        {
+          "id": "p1_d2",
+          "type": "decision",
+          "title": "Broken link issue",
+          "prompt": "While reviewing the course, you find that one textbook link does not work and one assignment description seems unclear. What do you do?",
+          "choices": [
+            {
+              "id": "A",
+              "text": "Email moodlesupport@tiffin.edu and explain both issues clearly.",
+              "effects": { "policyCompliance": 10, "studentExperience": 5 },
+              "setTriggers": { "reportedBrokenLinks": true },
+              "feedback": "Correct. Instructors should report course issues rather than trying to work around them silently."
+            },
+            {
+              "id": "B",
+              "text": "Make a note to yourself and plan to tell students later if they ask.",
+              "effects": { "studentExperience": -10, "responsiveness": -5 },
+              "setTriggers": { "reportedBrokenLinks": false },
+              "feedback": "Students may encounter avoidable confusion if issues are not reported."
+            },
+            {
+              "id": "C",
+              "text": "Edit the course yourself to fix the issue.",
+              "effects": { "policyCompliance": -15 },
+              "setTriggers": { "editedCourseImproperly": true },
+              "feedback": "Instructors are not allowed to alter course dates, requirements, or course design elements."
+            }
+          ]
+        },
+        {
+          "id": "p1_d3",
+          "type": "decision",
+          "title": "Q&A forum subscription",
+          "prompt": "As part of course startup, you notice the Question and Answer forum. What do you do?",
+          "choices": [
+            {
+              "id": "A",
+              "text": "Subscribe to the forum so you will receive updates if students post there.",
+              "effects": { "responsiveness": 10, "instructorPresence": 5 },
+              "setTriggers": { "subscribedToQAForum": true },
+              "feedback": "Good choice. Subscribing helps you stay aware of student questions throughout the term."
+            },
+            {
+              "id": "B",
+              "text": "Skip it because students can always email you directly.",
+              "effects": { "responsiveness": -10, "studentExperience": -5 },
+              "setTriggers": { "subscribedToQAForum": false },
+              "feedback": "Students may feel unsupported if forum questions go unanswered."
+            },
+            {
+              "id": "C",
+              "text": "Decide to check it manually once in a while.",
+              "effects": { "responsiveness": -5 },
+              "setTriggers": { "subscribedToQAForum": false },
+              "feedback": "Manual checking may work sometimes, but it increases the chance that you miss important student questions."
+            }
+          ]
+        },
+        {
+          "id": "p1_d4",
+          "type": "decision",
+          "title": "Deadline pressure",
+          "prompt": "You receive a follow-up email reminding instructors that startup tasks must be completed by the deadline. It also states that if no response is received and required tasks are not completed, a replacement instructor may be assigned. How do you respond?",
+          "choices": [
+            {
+              "id": "A",
+              "text": "Reply promptly, confirm your progress, and finish the checklist on time.",
+              "effects": { "responsiveness": 10, "policyCompliance": 10 },
+              "feedback": "Prompt communication and on-time completion reduce concerns about course readiness."
+            },
+            {
+              "id": "B",
+              "text": "Do not reply since you plan to finish eventually.",
+              "effects": { "responsiveness": -15, "policyCompliance": -10 },
+              "feedback": "Silence during a deadline-sensitive setup period raises concerns."
+            },
+            {
+              "id": "C",
+              "text": "Reply briefly but still fail to finish the checklist by the deadline.",
+              "effects": { "responsiveness": 2, "policyCompliance": -15 },
+              "feedback": "Some communication helps, but missing the deadline still creates a serious problem."
+            }
+          ],
+          "conditionalMessages": [
+            {
+              "if": {
+                "all": [
+                  { "triggerEquals": { "completedChecklist": false } },
+                  { "choiceIn": ["B", "C"] }
+                ]
+              },
+              "message": "Your lack of completion and limited communication have raised concerns about course readiness. In a real setting, this could result in being replaced before the course begins."
+            }
+          ]
+        }
+      ],
+      "checkpoint": {
+        "title": "Phase 1 Summary: Course Readiness",
+        "showDashboard": true,
+        "summaryVariants": {
+          "high": "You entered the term prepared, followed required startup procedures, and reported course issues appropriately. This created a stronger foundation for student success.",
+          "low": "Some startup expectations were missed or delayed. Gaps in preparation may create avoidable confusion for students once the course opens."
+        }
+      },
+      "carryForward": [
+        {
+          "if": { "triggerEquals": { "subscribedToQAForum": false } },
+          "effect": "In Phase 2, a student question sits unanswered in the Q&A forum and later appears as a student complaint."
+        },
+        {
+          "if": { "triggerEquals": { "reportedBrokenLinks": false } },
+          "effect": "In Phase 2, a student says the textbook link does not work."
+        },
+        {
+          "if": { "triggerEquals": { "editedCourseImproperly": true } },
+          "effect": "In Phase 3, the Center for Online Learning flags a policy concern."
+        },
+        {
+          "if": { "triggerEquals": { "completedChecklist": false } },
+          "effect": "In Phase 2, the learner begins under pressure and gets a warning message from administration."
+        }
+      ]
+    },
+    {
+      "id": "phase2",
+      "title": "Phase 2: Course Launch",
+      "goal": "Establish instructor presence, communicate clearly, and support students during the first week of the course.",
+      "introText": "The course has officially opened, and students are beginning to log in. As the instructor, your role is to establish a strong presence, communicate expectations clearly, and support students as they begin navigating the course. Students may reach out with questions, and some may not log in at all. Your communication and responsiveness during this phase will shape the overall student experience.",
+      "prePhaseEvents": [
+        {
+          "id": "p2_pre_1",
+          "if": { "triggerEquals": { "completedChecklist": false } },
+          "display": "You receive a reminder from the Center for Online Learning noting that your course readiness checklist was not completed. You are expected to ensure all materials are accurate as the course begins."
+        }
+      ],
+      "scenes": [
+        {
+          "id": "p2_d1",
+          "type": "decision",
+          "title": "Welcome Announcement",
+          "prompt": "The course has opened. Students are beginning to log in. What do you do?",
+          "choices": [
+            {
+              "id": "A",
+              "text": "Post a detailed 'Welcome to the Course' announcement with an introduction, expectations, and where to begin.",
+              "effects": { "instructorPresence": 10, "studentExperience": 10 },
+              "setTriggers": { "postedWelcomeAnnouncement": true, "usedClearAnnouncements": true },
+              "feedback": "Strong start. Clear communication helps students feel supported and oriented."
+            },
+            {
+              "id": "B",
+              "text": "Post a short, basic welcome announcement with minimal detail.",
+              "effects": { "instructorPresence": 5, "studentExperience": 2 },
+              "setTriggers": { "postedWelcomeAnnouncement": true, "usedClearAnnouncements": false },
+              "feedback": "You establish some presence, but students may still feel unsure about expectations."
+            },
+            {
+              "id": "C",
+              "text": "Do not post an announcement.",
+              "effects": { "instructorPresence": -15, "studentExperience": -10 },
+              "setTriggers": { "postedWelcomeAnnouncement": false },
+              "feedback": "Lack of early communication can lead to confusion and disengagement."
+            }
+          ]
+        },
+        {
+          "id": "p2_d2",
+          "type": "decision",
+          "title": "Student Confusion Email",
+          "prompt": "A student emails: 'Hi Professor, I'm not sure where to start. I see a lot of materials and I'm a little confused.'",
+          "choices": [
+            {
+              "id": "A",
+              "text": "Respond promptly with clear step-by-step guidance and a supportive tone.",
+              "effects": { "responsiveness": 10, "studentExperience": 10 },
+              "feedback": "Clear, supportive communication helps students build confidence early."
+            },
+            {
+              "id": "B",
+              "text": "Respond briefly with 'Check the syllabus and Week 1 module.'",
+              "effects": { "responsiveness": 2, "studentExperience": -5 },
+              "feedback": "While technically correct, the response may feel dismissive to students."
+            },
+            {
+              "id": "C",
+              "text": "Delay responding for a couple of days.",
+              "effects": { "responsiveness": -15, "studentExperience": -10 },
+              "feedback": "Delayed responses can increase frustration and confusion."
+            }
+          ]
+        },
+        {
+          "id": "p2_d3",
+          "type": "conditional_decision",
+          "title": "Q&A Forum Activity",
+          "showIf": { "triggerEquals": { "subscribedToQAForum": false } },
+          "prompt": "A student posts a question in the Q&A forum about a broken textbook link. You do not see the post immediately because you are not subscribed. Two days later, another student emails: 'I posted in the forum but haven't heard anything. The textbook link doesn't work.'",
+          "choices": [
+            {
+              "id": "A",
+              "text": "Apologize, respond to the issue, and begin checking the forum more regularly.",
+              "effects": { "responsiveness": 5, "studentExperience": 5 },
+              "feedback": "You recover well, but earlier awareness could have prevented the delay."
+            },
+            {
+              "id": "B",
+              "text": "Respond only to the email and ignore the forum post.",
+              "effects": { "studentExperience": -5 },
+              "feedback": "Ignoring the forum reduces your visibility and presence."
+            },
+            {
+              "id": "C",
+              "text": "Tell the student to contact support themselves.",
+              "effects": { "studentExperience": -10, "instructorPresence": -5 },
+              "feedback": "Students expect instructor guidance, especially early in the course."
+            }
+          ],
+          "conditionalEffects": [
+            {
+              "if": { "triggerEquals": { "reportedBrokenLinks": false } },
+              "additionalEffects": { "studentExperience": -5 }
+            }
+          ]
+        },
+        {
+          "id": "p2_d4",
+          "type": "decision",
+          "title": "Inactive Students",
+          "prompt": "After a few days, you notice that several students have not logged into the course. What do you do?",
+          "choices": [
+            {
+              "id": "A",
+              "text": "Reach out to inactive students via email or Dragon360 and offer support.",
+              "effects": { "responsiveness": 10, "studentExperience": 8 },
+              "setTriggers": { "reachedOutToInactiveStudents": true },
+              "feedback": "Proactive outreach can significantly improve student retention and engagement."
+            },
+            {
+              "id": "B",
+              "text": "Wait a few more days to see if they log in.",
+              "effects": { "responsiveness": -5 },
+              "setTriggers": { "reachedOutToInactiveStudents": false },
+              "feedback": "Waiting may result in students falling further behind."
+            },
+            {
+              "id": "C",
+              "text": "Do nothing.",
+              "effects": { "responsiveness": -15, "studentExperience": -10 },
+              "setTriggers": { "reachedOutToInactiveStudents": false },
+              "feedback": "Lack of outreach can lead to early disengagement and withdrawal."
+            }
+          ]
+        },
+        {
+          "id": "p2_d5",
+          "type": "decision",
+          "title": "Advisor Escalation",
+          "prompt": "Some students still have not logged in after your initial outreach. What is your next step?",
+          "choices": [
+            {
+              "id": "A",
+              "text": "Contact the students' academic advisor in addition to your outreach.",
+              "effects": { "policyCompliance": 10, "responsiveness": 5 },
+              "setTriggers": { "contactedAdvisorForInactiveStudents": true },
+              "feedback": "Involving advisors ensures students receive broader support."
+            },
+            {
+              "id": "B",
+              "text": "Continue emailing students only.",
+              "effects": { "responsiveness": 2 },
+              "setTriggers": { "contactedAdvisorForInactiveStudents": false },
+              "feedback": "Continued outreach helps, but may not be enough."
+            },
+            {
+              "id": "C",
+              "text": "Stop following up.",
+              "effects": { "responsiveness": -10, "studentExperience": -10 },
+              "setTriggers": { "contactedAdvisorForInactiveStudents": false },
+              "feedback": "Disengaged students may not recover without intervention."
+            }
+          ]
+        }
+      ],
+      "checkpoint": {
+        "title": "Phase 2 Summary: Course Launch",
+        "showDashboard": true,
+        "summaryVariants": {
+          "high": "You established a strong instructor presence early in the course. Your communication was clear, timely, and supportive, helping students feel confident and engaged.",
+          "mixed": "You demonstrated some effective communication practices, but inconsistencies in responsiveness or clarity may have impacted the student experience.",
+          "low": "Limited communication and delayed responses created early challenges for students. Establishing a stronger presence and proactive outreach would improve engagement."
+        }
+      },
+      "carryForward": [
+        { "if": { "triggerEquals": { "postedWelcomeAnnouncement": false } }, "effect": "Students in Phase 3 are more confused and ask more questions." },
+        { "if": { "triggerEquals": { "usedClearAnnouncements": false } }, "effect": "More clarification emails appear in Phase 3." },
+        { "if": { "triggerEquals": { "reachedOutToInactiveStudents": false } }, "effect": "More missing assignments appear later." },
+        { "if": { "triggerEquals": { "contactedAdvisorForInactiveStudents": false } }, "effect": "Students remain disengaged and this increases grading workload later." },
+        { "if": { "triggerEquals": { "subscribedToQAForum": false } }, "effect": "Missed communication issues continue into later phases." }
+      ]
+    },
+    {
+      "id": "phase3",
+      "title": "Phase 3: Mid-Course Challenges",
+      "goal": "Demonstrate effective teaching practices through meaningful feedback, discussion engagement, policy clarity, and appropriate handling of academic integrity and course issues.",
+      "introText": "You are now midway through the course. Students are submitting assignments, participating in discussions, and reaching out with questions and concerns. Your role shifts from setup and communication to active teaching, feedback, and decision-making. The choices you make now will directly impact student learning, satisfaction, and course outcomes.",
+      "prePhaseEvents": [
+        { "id": "p3_pre_1", "if": { "triggerEquals": { "postedWelcomeAnnouncement": false } }, "display": "Several students seem unclear about course expectations and are asking repeated clarification questions." },
+        { "id": "p3_pre_2", "if": { "triggerEquals": { "usedClearAnnouncements": false } }, "display": "You are receiving multiple emails asking for clarification about assignments and due dates." },
+        { "id": "p3_pre_3", "if": { "triggerEquals": { "reachedOutToInactiveStudents": false } }, "display": "You notice several students have missing assignments and have not been participating." },
+        { "id": "p3_pre_4", "if": { "triggerEquals": { "contactedAdvisorForInactiveStudents": false } }, "display": "Some students who were previously inactive are still not engaging in the course." }
+      ],
+      "scenes": [
+        {
+          "id": "p3_d1",
+          "type": "decision",
+          "title": "Discussion Participation",
+          "prompt": "Students are actively posting in the discussion board this week. What is your approach?",
+          "choices": [
+            { "id": "A", "text": "Engage meaningfully by responding to several students with thoughtful, content-based replies.", "effects": { "instructorPresence": 10, "studentExperience": 8 }, "setTriggers": { "participatedInDiscussions": true }, "feedback": "Strong engagement helps deepen learning and shows active instructor presence." },
+            { "id": "B", "text": "Post a few generic replies like 'Great job' or 'I agree.'", "effects": { "instructorPresence": 3, "studentExperience": -3 }, "setTriggers": { "participatedInDiscussions": false }, "feedback": "Participation is visible, but lacks instructional value." },
+            { "id": "C", "text": "Do not participate in discussions this week.", "effects": { "instructorPresence": -15, "studentExperience": -10 }, "setTriggers": { "participatedInDiscussions": false }, "feedback": "Lack of participation can reduce student motivation and perceived support." }
+          ]
+        },
+        {
+          "id": "p3_d2",
+          "type": "decision",
+          "title": "Late Work Request",
+          "prompt": "A student emails: 'I missed the deadline due to work issues. Can I still submit the assignment?'",
+          "choices": [
+            { "id": "A", "text": "Refer to your clearly communicated late policy and respond consistently.", "effects": { "policyCompliance": 10, "studentExperience": 5 }, "setTriggers": { "definedLatePolicy": true }, "feedback": "Clear and consistent policies help ensure fairness and transparency." },
+            { "id": "B", "text": "Decide on a case-by-case basis without a clear policy.", "effects": { "policyCompliance": -5, "studentExperience": -5 }, "setTriggers": { "definedLatePolicy": false }, "feedback": "Inconsistent decisions can lead to confusion and perceived unfairness." },
+            { "id": "C", "text": "Deny the request without explanation.", "effects": { "studentExperience": -10 }, "feedback": "Lack of explanation can negatively impact student trust." }
+          ]
+        },
+        {
+          "id": "p3_d3",
+          "type": "decision",
+          "title": "Assignment Feedback",
+          "prompt": "You are grading assignments for the week. What approach do you take?",
+          "choices": [
+            { "id": "A", "text": "Provide personalized, detailed feedback for each student.", "effects": { "feedbackQuality": 15, "studentExperience": 10 }, "setTriggers": { "usedPersonalizedFeedback": true }, "feedback": "High-quality feedback supports learning and improvement." },
+            { "id": "B", "text": "Use the same general feedback comment for most students.", "effects": { "feedbackQuality": -10, "studentExperience": -5 }, "setTriggers": { "usedPersonalizedFeedback": false }, "feedback": "Generic feedback limits student growth." },
+            { "id": "C", "text": "Provide minimal feedback with just a score.", "effects": { "feedbackQuality": -15, "studentExperience": -10 }, "setTriggers": { "usedPersonalizedFeedback": false }, "feedback": "Minimal feedback provides little instructional value." }
+          ]
+        },
+        {
+          "id": "p3_d4",
+          "type": "decision",
+          "title": "AI Use Concern",
+          "prompt": "While grading, you notice a student submission that seems overly polished and inconsistent with their previous work.",
+          "choices": [
+            { "id": "A", "text": "Reach out to the student, ask for clarification, and reinforce proper AI citation expectations.", "effects": { "policyCompliance": 10, "studentExperience": 5 }, "setTriggers": { "handledAIConcernAppropriately": true }, "feedback": "Addressing concerns professionally supports both integrity and student learning." },
+            { "id": "B", "text": "Accuse the student of misconduct immediately.", "effects": { "studentExperience": -10, "policyCompliance": -5 }, "setTriggers": { "handledAIConcernAppropriately": false }, "feedback": "Immediate accusations without investigation can escalate issues unnecessarily." },
+            { "id": "C", "text": "Ignore the concern and continue grading.", "effects": { "policyCompliance": -10 }, "setTriggers": { "handledAIConcernAppropriately": false }, "feedback": "Ignoring potential issues may compromise academic integrity." }
+          ]
+        },
+        {
+          "id": "p3_d5",
+          "type": "decision",
+          "title": "Course Issue (Temptation to Edit)",
+          "prompt": "You notice that an assignment due date appears confusing, and a student emails about it.",
+          "choices": [
+            { "id": "A", "text": "Report the issue to moodlesupport@tiffin.edu and clarify expectations to students.", "effects": { "policyCompliance": 10, "studentExperience": 5 }, "feedback": "Correct approach. Course structure should not be altered by instructors." },
+            { "id": "B", "text": "Edit the assignment yourself in Moodle to fix it.", "effects": { "policyCompliance": -20 }, "setTriggers": { "editedCourseImproperly": true }, "feedback": "Editing the course violates institutional policy." },
+            { "id": "C", "text": "Do nothing and let students figure it out.", "effects": { "studentExperience": -10 }, "feedback": "Lack of action can increase confusion and frustration." }
+          ]
+        }
+      ],
+      "checkpoint": {
+        "title": "Phase 3 Summary: Mid-Course Teaching",
+        "showDashboard": true,
+        "summaryVariants": {
+          "high": "You demonstrated strong instructional practices through meaningful engagement, high-quality feedback, and consistent policy application. Students are supported and actively learning.",
+          "mixed": "Your instructional practices show some strengths, but inconsistencies in feedback, engagement, or policy clarity may be impacting student learning.",
+          "low": "Limited engagement, unclear policies, and weak feedback practices are affecting both student learning and overall course experience."
+        }
+      },
+      "carryForward": [
+        { "if": { "triggerEquals": { "usedPersonalizedFeedback": false } }, "effect": "Larger grading confusion appears at the end of term." },
+        { "if": { "triggerEquals": { "definedLatePolicy": false } }, "effect": "Multiple grade disputes appear in Phase 4." },
+        { "if": { "triggerEquals": { "participatedInDiscussions": false } }, "effect": "Lower student experience carries forward." },
+        { "if": { "triggerEquals": { "handledAIConcernAppropriately": false } }, "effect": "An escalation scenario appears in Phase 4." },
+        { "if": { "triggerEquals": { "editedCourseImproperly": true } }, "effect": "A formal warning from the Center for Online Learning appears in Phase 4." }
+      ]
+    },
+    {
+      "id": "phase4",
+      "title": "Phase 4: End-of-Term Responsibilities",
+      "goal": "Successfully manage grading, communication, and final course responsibilities while meeting institutional deadlines and expectations.",
+      "introText": "The course is coming to an end. Final assignments are being submitted, students are asking about grades, and deadlines are approaching quickly. Final grades must be submitted in Self-Service by 8:00 AM on the Tuesday following the last day of the term. Your ability to manage grading, communicate clearly, and meet deadlines will directly impact your evaluation as an adjunct instructor.",
+      "prePhaseEvents": [
+        { "id": "p4_pre_1", "if": { "triggerEquals": { "usedPersonalizedFeedback": false } }, "display": "Several students are emailing asking why they received certain grades and requesting clarification." },
+        { "id": "p4_pre_2", "if": { "triggerEquals": { "definedLatePolicy": false } }, "display": "You are receiving multiple requests for late submissions and grade disputes due to unclear expectations." },
+        { "id": "p4_pre_3", "if": { "triggerEquals": { "participatedInDiscussions": false } }, "display": "Course engagement has been low, and some students express dissatisfaction in their communication." },
+        { "id": "p4_pre_4", "if": { "triggerEquals": { "handledAIConcernAppropriately": false } }, "display": "A potential academic integrity issue has been escalated and may require additional follow-up." },
+        { "id": "p4_pre_5", "if": { "triggerEquals": { "editedCourseImproperly": true } }, "display": "You receive a notice from the Center for Online Learning regarding unauthorized course changes." },
+        { "id": "p4_pre_6", "if": { "triggerEquals": { "reachedOutToInactiveStudents": false } }, "display": "Several students have missing work and are now requesting last-minute accommodations." }
+      ],
+      "scenes": [
+        {
+          "id": "p4_d1",
+          "type": "decision",
+          "title": "Grading Backlog",
+          "prompt": "You have several assignments left to grade, and the final deadline is approaching quickly.",
+          "choices": [
+            { "id": "A", "text": "Create a plan to complete grading efficiently while still providing meaningful feedback.", "effects": { "feedbackQuality": 10, "policyCompliance": 10 }, "feedback": "Strong time management allows you to maintain quality while meeting expectations." },
+            { "id": "B", "text": "Rush through grading with minimal feedback to meet the deadline.", "effects": { "feedbackQuality": -10, "studentExperience": -5 }, "feedback": "Meeting deadlines is important, but reduced feedback impacts student learning." },
+            { "id": "C", "text": "Delay grading and plan to finish later.", "effects": { "policyCompliance": -15, "responsiveness": -5 }, "feedback": "Delays increase risk of missing critical deadlines." }
+          ]
+        },
+        {
+          "id": "p4_d2",
+          "type": "decision",
+          "title": "Student Grade Concerns",
+          "prompt": "Several students email asking for clarification about their final grades.",
+          "choices": [
+            { "id": "A", "text": "Respond clearly and professionally, explaining grading decisions and offering support.", "effects": { "responsiveness": 10, "studentExperience": 10 }, "feedback": "Transparent communication builds trust and reduces conflict." },
+            { "id": "B", "text": "Respond briefly without much explanation.", "effects": { "responsiveness": 3, "studentExperience": -3 }, "feedback": "Limited responses may leave students unsatisfied." },
+            { "id": "C", "text": "Ignore or delay responses.", "effects": { "responsiveness": -15, "studentExperience": -10 }, "feedback": "Ignoring concerns can escalate issues and damage student experience." }
+          ]
+        },
+        {
+          "id": "p4_d3",
+          "type": "decision",
+          "title": "Final Grade Submission",
+          "prompt": "The deadline is approaching. Final grades must be submitted by 8:00 AM Tuesday following the last day of the term.",
+          "choices": [
+            { "id": "A", "text": "Submit all final grades on time.", "effects": { "policyCompliance": 20 }, "setTriggers": { "submittedFinalGradesOnTime": true }, "feedback": "Meeting deadlines is a critical responsibility for instructors." },
+            { "id": "B", "text": "Submit slightly late.", "effects": { "policyCompliance": -10 }, "setTriggers": { "submittedFinalGradesOnTime": false }, "feedback": "Late submission may result in administrative concerns." },
+            { "id": "C", "text": "Miss the deadline entirely.", "effects": { "policyCompliance": -25 }, "setTriggers": { "submittedFinalGradesOnTime": false }, "feedback": "Missing deadlines can significantly impact institutional processes." }
+          ]
+        },
+        {
+          "id": "p4_d4",
+          "type": "decision",
+          "title": "Final Communication",
+          "prompt": "The course is ending. Do you send a final message to students?",
+          "choices": [
+            { "id": "A", "text": "Send a closing announcement summarizing the course and next steps.", "effects": { "instructorPresence": 8, "studentExperience": 8 }, "feedback": "A strong closing message reinforces instructor presence and provides closure." },
+            { "id": "B", "text": "Send a brief message with minimal detail.", "effects": { "instructorPresence": 3 }, "feedback": "Some communication is better than none, but may feel incomplete." },
+            { "id": "C", "text": "Do not send a final message.", "effects": { "instructorPresence": -10, "studentExperience": -5 }, "feedback": "Lack of closure can leave students feeling unsupported." }
+          ]
+        }
+      ],
+      "checkpoint": {
+        "title": "Final Instructor Performance Summary",
+        "showDashboard": true,
+        "showFinalEvaluation": true
+      }
+    }
+  ],
+  "evaluation": {
+    "majorPolicyViolationTriggers": ["editedCourseImproperly"],
+    "requiredOnTimeTrigger": "submittedFinalGradesOnTime",
+    "redCategoryThresholdCountForFailure": 2,
+    "outcomes": [
+      {
+        "id": "recommended",
+        "label": "Recommended for Continued Teaching",
+        "conditions": {
+          "submittedFinalGradesOnTime": true,
+          "noMajorPolicyViolations": true,
+          "scorePattern": "most_green_or_high_yellow"
+        },
+        "message": "You demonstrated strong instructional practices, clear communication, and consistent adherence to institutional expectations. You are recommended for continued teaching assignments."
+      },
+      {
+        "id": "conditional",
+        "label": "Conditional / Needs Improvement",
+        "conditions": {
+          "scorePattern": "mixed_yellow_red_or_minor_policy_issues_or_late_grades"
+        },
+        "message": "Your performance shows areas of strength, but also several areas that need improvement. Additional support or training may be recommended before future teaching assignments."
+      },
+      {
+        "id": "not_recommended",
+        "label": "Not Recommended for Rehire",
+        "conditions": {
+          "any": [
+            "multiple_red_categories",
+            "major_policy_violations",
+            "submittedFinalGradesOnTime_false_and_low_scores"
+          ]
+        },
+        "message": "Significant concerns were identified in instructional practices, communication, and/or policy compliance. At this time, you are not recommended for future teaching assignments."
+      }
+    ],
+    "optionalAutoGeneratedSections": [
+      { "id": "strengths", "title": "Strengths", "rule": "list metrics at green or strongest choices" },
+      { "id": "areasForImprovement", "title": "Areas for Improvement", "rule": "list metrics at red or weakest choices" }
+    ]
+  }
+}
